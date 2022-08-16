@@ -64,7 +64,7 @@ for (v in vac){
     
     x=distributions(n, v, a_death, b_death, a_severe, b_severe)  
     print(head(x))
-    write.csv(x, paste("data/DistProb_","_Vac",vac,".csv",sep=""))
+    write.csv(x, paste("output/DistProb_Vac",vac,".csv",sep=""))
   }
 }
 
