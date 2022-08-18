@@ -1,5 +1,4 @@
 modelo_func<-function(
-  esc,
   vacuna,
   b.esc,
   lugar,
@@ -130,6 +129,94 @@ modelo_func<-function(
   fechas_simul=seq((as.Date("2021-08-02", "%Y-%m-%d")),(as.Date("2021-08-02", "%Y-%m-%d")+generations-1),by=1)
   df <- data.frame(fechas_simul, simul$ciclo, simul$U, simul$E, simul$A, simul$TP, simul$FP, simul$S, simul$R,  simul$D, simul$beta.v, simul$rt_esc, simul$tests)
   return(df)
+}
+
+
+
+#############################################################################################
+
+plot_func<-function(lugar.name, inic_esc, fin_esc, vac, b.esc, esc.size, w, type.test, tau, ci){
+  csv_simu=read.csv(paste("output/",lugar.name,"_",inic_esc,"_",fin_esc,"_Vac",vac,"_bEsc",b.esc,"_Tot",esc.size,"_w",w,"_Test",type.test,"_tau",tau,"_A0E0",ci,".csv",sep=""))
+  
+  
+  plot1 <- plot_ly(x = csv_simu$x.fechas_simul[2:length((csv_simu$x.fechas_simul))], y = csv_simu$x.simul.E[2:length((csv_simu$x.fechas_simul))], type = 'scatter', mode = 'lines',name="Presymptomatic", line = list(color = "rgb(214, 39, 40)", width = 2, dash = FALSE)) 
+  plot1 <- plot1%>%add_trace(x =csv_simu$x.fechas_simul[2:length((csv_simu$x.fechas_simul))], y = csv_simu$x.simul.A[2:length((csv_simu$x.fechas_simul))], type = 'scatter', mode = 'lines',name = "Aymptomatic", line = list(color = "rgb(214, 39, 40)", width = 2, dash = 'dot')
+  )
+  
+  
+  plot2 <- plot_ly(x = csv_simu$x.fechas_simul[2:length((csv_simu$x.fechas_simul))], y = csv_simu$x.simul.TP[2:length((csv_simu$x.fechas_simul))], type = 'scatter', mode = 'lines',name="True Positive", line = list(color = "rgb(252, 189, 1)", width = 2, dash = 'dash')) 
+  plot2 <- plot2%>%add_trace(x =csv_simu$x.fechas_simul[2:length((csv_simu$x.fechas_simul))], y = csv_simu$x.simul.S[2:length((csv_simu$x.fechas_simul))], type = 'scatter', mode = 'lines',name = "Symptomatic", line = list(color = "rgb(252, 189, 1)", width = 2, dash = FALSE)
+  )
+  
+  
+  plot3 <- plot_ly(x = csv_simu$x.fechas_simul[2:length((csv_simu$x.fechas_simul))], y = csv_simu$x.simul.U[2:length((csv_simu$x.fechas_simul))], type = 'scatter', mode = 'lines',name="Susceptible", line = list(color = "rgb(153, 197, 49)", width = 2, dash = 'dash')) 
+  plot3 <- plot3%>%add_trace(x =csv_simu$x.fechas_simul[2:length((csv_simu$x.fechas_simul))], y = (csv_simu$x.simul.U+csv_simu$x.simul.E+csv_simu$x.simul.A+csv_simu$R)[2:length((csv_simu$x.fechas_simul))], type = 'scatter', mode = 'lines',name = "In school", line = list(color = "rgb(153, 197, 49)", width = 2, dash = FALSE)
+  )
+  
+  plot4 <- plot_ly(x = csv_simu$x.fechas_simul[2:length((csv_simu$x.fechas_simul))], y = csv_simu$x.simul.tests[2:length((csv_simu$x.fechas_simul))], type = 'scatter', mode = 'lines',name="Number of Test", line = list(color = "rgb(206, 37,201)", width = 2, dash = 'dot')) 
+  
+  
+  mrg <- list(l = 50, r = 50,
+              b = 0, t = 50,
+              pad = 20)
+  
+  annotations = list( 
+    list( 
+      x = 0.5,  
+      y = 1.0,  
+      text = paste("Simulations for a school. Vaccination:",vac, " / Type of Test:",tau, sep=""),  font=list(size=20),  
+      xref = "paper",  
+      yref = "paper",  
+      xanchor = "center",  
+      yanchor = "bottom",  
+      showarrow = FALSE
+    )
+  )
+  
+  
+  fig <- subplot(plot1, plot2, plot3, plot4, nrows = 4, shareX = TRUE,  margin = c(0.05,0.05,0.05,0.05)) %>%
+    layout(#plot_bgcolor='#e5ecf6', 
+      xaxis = list(
+        tickfont = list(size = 20),
+        tickangle=-90, #Angulo de labels
+        autotick=F,  #Elegir xlabels values
+        dtick = 30, #Intervalo entre labels
+        zerolinecolor = '#000000',#'#cccc', 
+        zerolinewidth = 2, 
+        gridcolor = '#cccc'), 
+      yaxis = list( 
+        tickfont = list(size = 19),
+        zerolinecolor = '#cccc', 
+        zerolinewidth = 2, 
+        gridcolor = '#cccc',
+        title = 'Population',
+        titlefont=list(size=17)),
+      yaxis2 = list( 
+        tickfont = list(size = 19),
+        zerolinecolor = '#000000', 
+        zerolinewidth = 2, 
+        gridcolor = '#cccc',
+        title = 'Population',
+        titlefont=list(size=17)),
+      yaxis3 = list( 
+        tickfont = list(size = 19),
+        zerolinecolor = '#000000', 
+        zerolinewidth = 2, 
+        gridcolor = '#cccc',
+        title = 'Population',
+        titlefont=list(size=17)),
+      yaxis4 = list( 
+        tickfont = list(size = 19),
+        zerolinecolor = '#000000', 
+        zerolinewidth = 2, 
+        gridcolor = '#cccc',
+        title = 'Tests',
+        titlefont=list(size=17)),
+      margin = mrg,
+      annotations = annotations,
+      legend=list(font=list(size=20)))
+  
+  return(fig)
 }
 
 
