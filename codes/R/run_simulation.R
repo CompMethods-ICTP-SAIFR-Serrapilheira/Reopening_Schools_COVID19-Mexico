@@ -1,6 +1,7 @@
 library(dplyr) # >%>
 library(interp)
 library(tidyr) #expand function
+library(plotly)
 source("codes/R/fun_simulations.R", local = TRUE)
 
 phi <- 0.3
@@ -9,11 +10,9 @@ Se <- 0.80
 TP0inic <-  0 
 FP0inic <- 0
 estimations_date <- '2021-09-26'
-inic_esc='2021-05-01'
-fin_esc= '2021-09-15'
+TimeWindow <- 3
 pop_tot <- 1.05*(10^6)
 tau.ext <- 0
-esc <-'universidad'
 vac <- 'YES'
 lugar.name <- 'QUERETARO_CAP'
 esc.size <- 1000
@@ -31,9 +30,21 @@ ci <- 3
 #tau_Func
 TauMax=esc.size/2
 
+if(TimeWindow==1){
+  inic_esc='2020-08-02'
+  fin_esc= '2020-12-17'
+}else if(TimeWindow==2){
+  inic_esc='2021-03-05'
+  fin_esc= '2021-07-20'
+}else if(TimeWindow==3){
+  inic_esc='2021-05-01'
+  fin_esc= '2021-09-15'
+}else{
+  print("Error")
+}
+
 
 x <- modelo_func(
-  esc=esc,
   vacuna=vac,
   b.esc=b.esc,
   lugar=lugar.name,
@@ -45,6 +56,9 @@ x <- modelo_func(
   E0inic=ci 
 )
 
-df_simulations <- data.frame(x$fechas_simul,x$simul.U, x$simul.E, x$simul.A, x$simul.TP, x$simul.FP, x$simul.S, x$simul.R, x$simul.D, x$simul.beta.v, x$simul.rt_esc, x$simul.tests)
-write.csv(df_simulations, paste("output/",lugar.name,"_",esc,"_Vac",vac,"_bEsc",b.esc,"_Tot",esc.size,"_w",w,"_Test",type.test,"_tau",tau,"_A0E0",ci,".csv", sep=""))
+df_simulations <- data.frame(x$fechas_simul,x$x.simul.Simul.U, x$simul.E, x$simul.A, x$simul.TP, x$simul.FP, x$simul.S, x$simul.R, x$simul.D, x$simul.beta.v, x$simul.rt_esc, x$simul.tests)
+write.csv(df_simulations, paste("output/",lugar.name,"_",inic_esc,"_",fin_esc,"_Vac",vac,"_bEsc",b.esc,"_Tot",esc.size,"_w",w,"_Test",type.test,"_tau",tau,"_A0E0",ci,".csv", sep=""))
 
+
+############   Plot   ##############################
+plot_func(lugar.name, inic_esc, fin_esc, vac, b.esc, esc.size, w, type.test, tau, ci)
