@@ -11,17 +11,19 @@ modelo_func<-function(
 ){
   U0inic= esc.size-(D0inic+S0inic+Rec0inic+A0inic+E0inic+TP0inic+FP0inic)
 
+  #*************************************************************************
+  #------------------------Importing data----------------------------
   cltr=read.csv(paste("data/Estimations_",estimations_date,"/covidestim_",lugar,".csv", sep=""))
   cltr=transform(cltr, date= as.Date(date, origin = "1900-01-01"))
-  
   idx_inic_cltr=match(as.Date(inic_esc, "%Y-%m-%d"),cltr$date)
   idx_fin_cltr=match(as.Date(fin_esc, "%Y-%m-%d"), cltr$date)
   
-  #--Rt
+  #Extracting Rt data
   RT=cltr$Rt
   RT=RT[idx_inic_cltr: idx_fin_cltr]
   n=length(RT)
   
+  #Extracting active cases
   pop_inf=cltr$pop.infectiousness
   activos<-c(numeric(length(RT)))
   
@@ -30,6 +32,7 @@ modelo_func<-function(
     activos[t-idx_inic_cltr+1]=sum(activos_vect)
   }
   
+  #Importing density probability samples previous generated with "run_distribution.R" code
   DistProb=read.csv(paste("output/DistProb","_Vac",vacuna,".csv", sep=""))
   generations=abs(as.numeric(as.Date(format(as.Date(inic_esc, "%Y-%m-%d"), "%Y%m%d"), format="%Y%m%d")-as.Date(format(as.Date(fin_esc, "%Y-%m-%d"), "%Y%m%d"), format="%Y%m%d"), unit="days"))
   
@@ -45,6 +48,7 @@ modelo_func<-function(
   beta.v<-c(0,numeric(generations-1))
   rt_esc<-c(0,numeric(generations-1))
   
+  #Defining tau value and crating tests vector
   if(type.test==1){
     tau=esc.size*tau
     tests<-c(tau/(U0inic+A0inic+E0inic+Rec0inic),numeric(generations-1))  
@@ -56,8 +60,10 @@ modelo_func<-function(
     tau=tests[1]
   }
   
-  
+  #Runing simulations for each unit of time
   for (t in (1:(generations-1))){
+    
+    #Density probability values at time t
     R0=RT[t]
     Ps=DistProb$Ps_output[t]
     Pr=DistProb$Pr_output[t]
@@ -67,17 +73,18 @@ modelo_func<-function(
     Psev=DistProb$Psev_output[t]
     Pd=DistProb$Pd_output[t]
     
+    #Beta and internat Rt value at time t
     beta=R0*(Pr*(esc.size-tau.ext)+Se*tau.ext)*(Ps*(esc.size-tau.ext)+Se*tau.ext)/(esc.size*(Pr*sigma*(esc.size-tau.ext)+Ps*(esc.size-tau.ext)*(1-sigma)+Se*tau.ext))
     beta.v[t+1]=beta
     rt_esc[t+1]=b.esc*(esc.size*(Pr*sigma*(esc.size-tau)+Ps*(esc.size-tau)*(1-sigma)+Se*tau))/((Pr*(esc.size-tau)+Se*tau)*(Ps*(esc.size-tau)+Se*tau))
     
+    #Seting 
     if(vacuna=="YES")
       alph=0.27
     else if(vacuna=="NO"){
       alph=1
     }
       
-    
     x_pop=1-alph*beta*(activos[t]/pop_tot)
     mu=(1-alph*b.esc*(A[t]+E[t])/(U[t]+A[t]+E[t]+R[t]))*x_pop
     g=R[t]/(R[t]+U[t])
