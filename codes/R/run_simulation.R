@@ -5,7 +5,7 @@ library(dplyr)
 library(interp)
 library(tidyr) 
 library(plotly)
-source("codes/R/fun_simulations.R", local = TRUE)
+source("codes/R/functions/fun_simulations.R", local = TRUE)
 
 
 #*************************************************************************
