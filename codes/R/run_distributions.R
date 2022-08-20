@@ -1,6 +1,6 @@
 library(dplyr) #required for "sample_n" function
 library(fitdistrplus) #required for "fitdist" function
-source("codes/R/fun_fitdist.R") #Import "fit.dist" function
+source("codes/R/functions/fun_fitdist.R") #Import "fit.dist" function
 
 #----------Parameters----------
 database ="210801COVID19MEXICO.csv"
