@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #' --------------------------------------
 #' title: run_simulation.R
 #' author: Ruth Corona-Moreno
@@ -62,6 +63,18 @@ library(plotly)
 source("codes/R/functions/fun_simulations.R", local = TRUE)
 
 
+=======
+#Purpose:Simulate data of COVID-19 epidemic dynamic in a university in Mexico
+#Author: Ruth Corona-Moreno
+
+library(dplyr) 
+library(interp)
+library(tidyr) 
+library(plotly)
+source("codes/R/fun_simulations.R", local = TRUE)
+
+
+>>>>>>> 4678cd49e2fdadc5cb5808cc54e338a6acb6ce6e
 #*************************************************************************
 #------------------------Set parameters values----------------------------
 
