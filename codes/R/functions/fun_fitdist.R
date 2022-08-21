@@ -1,3 +1,22 @@
+#' --------------------------------------
+#' title: fun_fitdist.R
+#' author: Ruth Corona-Moreno
+#' description: The script has the functions "fit.dist.deaths", "fit.dist.severe" and "distributions" called by the "run_distributions.R" code.
+#' 
+#' "fit.dist.deaths"
+#' --------------
+#' This function perform the estimation of the density probability distribution of deaths 
+#' 
+#' "fit.dist.severe"
+#' --------------
+#' This function perform the estimation of the density probability distribution of deaths 
+#' 
+#' "distributions"
+#' --------------
+#' This function perform the sampling of all density probability distributions, which are required to perform the simulations of the model. 
+
+
+
 #----Function to fit a distribution-----
 fit.dist.deaths<-function(n, vac, directory){
   pop.tot=n

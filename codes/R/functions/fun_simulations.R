@@ -1,3 +1,20 @@
+#' --------------------------------------
+#' title: fun_simulation.R
+#' author: Ruth Corona-Moreno
+#' description: The script has the functions "modelo_func" and "plot_func" called by the "run_simulation.R" code.
+#' 
+#' "modelo_func"
+#' --------------
+#' This function perform the simulations according to the parameters values in the "run_simulation.R" script. 
+#' Its output is a dataframe with columns: x.fechas_simul,	x.simul.U,	x.simul.E,	x.simul.A,	x.simul.TP,	x.simul.FP, x.simul.S,	x.simul.R,	x.simul.D,	x.simul.beta.v,	x.simul.rt_esc and	x.simul.tests,
+#' which respectively correspond to the simulation variables: fechas(dates), U, E, TP, FP,S, R, D, beta_int, Rt_int and number of tests.
+#' 
+#' "plot_func"
+#' --------------
+#' This function use "plotly" package to make a plot with four subplots comparing simulations computed with "modelo_func" but saved in "output" folder with the name:
+#' paste("output/",lugar.name,"_",inic_esc,"_",fin_esc,"_Vac",vac,"_bEsc",b.esc,"_Tot",esc.size,"_w",w,"_Test",type.test,"_tau",tau,"_A0E0",ci,".csv",sep=""))
+
+
 modelo_func<-function(
   vacuna,
   b.esc,
